@@ -1,0 +1,4 @@
+org_var: "Aceve Settings"
+
+stow_dirs:
+  - pass/aceve

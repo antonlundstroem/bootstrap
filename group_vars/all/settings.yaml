@@ -1,0 +1,12 @@
+packages:
+  - git
+  - fish
+  - tmux
+  - pass
+  - gpg
+  #- docker
+  - neovim
+
+
+stow_dirs:
+  - git
