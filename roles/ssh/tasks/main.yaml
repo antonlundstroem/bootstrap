@@ -6,11 +6,31 @@
 
 - name: Add GitHub to known_hosts (prevent host key prompt)
   ansible.builtin.shell: |
-    ssh-keyscan -t rsa,ecdsa,ed25519 github.com >> ~/.ssh/known_hosts
+    ssh-keyscan -t rsa,ecdsa,ed25519 {{ item.name }} >> ~/.ssh/known_hosts
   args:
     creates: "{{ ansible_env.HOME }}/.ssh/known_hosts"
+  when: item.host is defined
+  loop: "{{ ssh_keys.hosts }}" ## fix item.hosts.host or something in the vaults
 
-## PERSONAL
+- name: Add SSH config entries for each org key
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_env.HOME }}/.ssh/config"
+    create: true
+    mode: '0600'
+    marker: "# {mark} ANSIBLE MANAGED {{ host_entry.host }} ({{ key_entry.name }})"
+    block: |
+      Host {{ host_entry.host }}
+        HostName {{ host_entry.host }}
+        User {{ host_entry.user | default('git') }}
+        IdentityFile ~/.ssh/{{ key_entry.name }}
+        {{ host_entry.extra | default('') | indent(8, false) }}
+  loop: "{{ lookup('subelements', ssh_keys_org, 'hosts') }}"
+  loop_control:
+    loop_var: pair
+  vars:
+    key_entry: "{{ pair.0 }}"
+    host_entry: "{{ pair.1 }}"
+
 - name: Install private SSH keys
   copy:
     dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}"

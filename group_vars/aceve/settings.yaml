@@ -2,16 +2,6 @@ filesystem_org:
   directories::
     - ~/code/work
 
-
-ssh_config_org:
-  - host: aceve
-    hostname: github.com
-    user: git
-    identityfile: "~/.ssh/id_rsa_org"
-    extra: |
-      IdentitiesOnly yes
-      PreferredAuthentications publickey
-
 repos_org:
   dots: github.com:antonlundstroem/dots-aceve.git
 
