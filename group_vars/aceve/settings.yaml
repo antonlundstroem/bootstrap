@@ -1,12 +1,6 @@
 filesystem_org:
   directories::
     - ~/code/work
-  stow:
-    - pass
-    - glab-cli
-    - taskwarrior
-    - bugwarrior
-    - timewarrior
 
 repos_org:
   dots: github.com:antonlundstroem/dots-aceve.git
@@ -19,3 +13,9 @@ packages_org:
   # cursor-agent
   #
 
+stow_org:
+  - pass
+  - glab-cli
+  - taskwarrior
+  - bugwarrior
+  - timewarrior

@@ -2,7 +2,7 @@
   shell: "stow -t {{ ansible_env.HOME }} {{ item }}"
   args:
     chdir: "{{ ansible_env.HOME }}/.dots-core"
-  with_items: "{{ filesystem.stow.core }}"
+  with_items: "{{ stow.core }}"
   register: stow_result_core
   changed_when: stow_result_core is changed
 
@@ -10,7 +10,7 @@
   shell: "stow -t {{ ansible_env.HOME }} {{ item }}"
   args:
     chdir: "{{ ansible_env.HOME }}/.dots"
-  with_items: "{{ filesystem.stow.full }}"
+  with_items: "{{ stow.full }}"
   register: stow_result_full
   changed_when: stow_result_full is changed
 
@@ -18,6 +18,6 @@
   shell: "stow -t {{ ansible_env.HOME }} {{ item }}"
   args:
     chdir: "{{ ansible_env.HOME }}/.dots-org"
-  with_items: "{{ filesystem_org.stow }}"
+  with_items: "{{ stow_org }}"
   register: stow_result_org
   changed_when: stow_result_org is changed

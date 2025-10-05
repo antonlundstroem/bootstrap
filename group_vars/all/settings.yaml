@@ -1,17 +1,6 @@
 filesystem:
   directories:
     - ~/code/personal
-  stow:
-    core:
-      - git
-      - pass
-      - tmux
-    full:
-      - nvim
-      - fish
-      - k9s
-      - task
-
 repos:
   dots_core: git@github.com:antonlundstroem/dots-core.git
   dots_full: git@github.com:antonlundstroem/dots.git
@@ -19,13 +8,13 @@ repos:
 
 packages:
   core:
+    - sudo
     - openssh
     - git
     - curl
     - neovim
     - tmux
     - pass
-    - gpg
 
   full:
     - kubectl
@@ -37,6 +26,18 @@ packages:
     - npm
     - terraform
     - fish
+
+stow:
+  core:
+    - git
+    - pass
+    - tmux
+  full:
+    - nvim
+    - fish
+    - k9s
+    - task
+
 
 #binaries:
 #  - name: taskwarrior
