@@ -6,7 +6,7 @@
 
 - hosts: localhost
   connection: local
-  become: "{{ user.name }}"
+  become: false
   pre_tasks:
     - name: Build package list
       vars:
