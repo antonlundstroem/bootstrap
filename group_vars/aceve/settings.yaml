@@ -1,6 +1,3 @@
-user:
-  name: anlu
-
 filesystem_org:
   directories::
     - ~/code/work
