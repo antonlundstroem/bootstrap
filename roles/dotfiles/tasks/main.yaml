@@ -2,26 +2,26 @@
   git:
     repo: "{{ repos.dots_core }}"
     dest: "{{ ansible_env.HOME }}/.dots-core"
-    version: main
+    version: master
     update: yes
 
 - name: Clone dotfiles repository
   git:
     repo: "{{ repos.dots_full }}"
     dest: "{{ ansible_env.HOME }}/.dots"
-    version: main
+    version: master
     update: yes
 
 - name: Clone scripts repository
   git:
     repo: "{{ repos.scripts }}"
     dest: "{{ ansible_env.HOME }}/.scripts"
-    version: main
+    version: master
     update: yes
 
 - name: Clone dotfiles org repository
   git:
     repo: "{{ repos_org.dots }}"
     dest: "{{ ansible_env.HOME }}/.dots-org"
-    version: main
+    version: master
     update: yes
