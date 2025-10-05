@@ -11,7 +11,7 @@
     mode: '0600'
   when: item.private is defined
   loop: "{{ ssh_keys }}"
-  no_log: true
+  #no_log: true
 
 - name: Install public SSH keys
   copy:
@@ -20,7 +20,7 @@
     mode: '0644'
   when: item.public is defined
   loop: "{{ ssh_keys }}"
-  no_log: true
+  #no_log: true
 
 - name: Install private SSH keys org
   copy:
@@ -29,7 +29,7 @@
     mode: '0600'
   when: item.private is defined
   loop: "{{ ssh_keys_org }}"
-  no_log: true
+  #no_log: true
 
 - name: Install public SSH keys org
   copy:
@@ -38,6 +38,6 @@
     mode: '0644'
   when: item.public is defined
   loop: "{{ ssh_keys_org }}"
-  no_log: true
+  #no_log: true
 
 
