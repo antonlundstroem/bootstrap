@@ -19,17 +19,17 @@ repos:
 
 packages:
   core:
-    #- openssh
+    - openssh
     - git
     - curl
     - neovim
     - tmux
     - pass
-    #- gpg
+    - gpg
 
   full:
     - kubectl
-    #- helm
+    - helm
     - docker
     - postgresql-client
     - k9s

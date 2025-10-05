@@ -12,9 +12,8 @@ repos_org:
   dots: github.com:antonlundstroem/dots-aceve.git
 
 packages_org:
-  - openssh-client
-  #- argocd
-  # - glab
+  - argocd
+  - glab
   # - dotnet
 #- 1password-cli -- mirrors have to be added
   # cursor-agent
