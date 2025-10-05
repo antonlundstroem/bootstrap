@@ -6,7 +6,7 @@
 
 - hosts: localhost
   connection: local
-  become: false
+  become_user: {{ user.name }}
   pre_tasks:
     - name: Build package list
       vars:
