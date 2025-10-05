@@ -12,7 +12,7 @@
   when: item.host is defined
   loop: "{{ ssh_keys.hosts }}" ## fix item.hosts.host or something in the vaults
 
-- name: Add SSH config entries for each org key
+- name: Add SSH config entries for each key and host
   ansible.builtin.blockinfile:
     path: "{{ ansible_env.HOME }}/.ssh/config"
     create: true
@@ -24,7 +24,7 @@
         User {{ host_entry.user | default('git') }}
         IdentityFile ~/.ssh/{{ key_entry.name }}
         {{ host_entry.extra | default('') | indent(8, false) }}
-  loop: "{{ lookup('subelements', ssh_keys_org, 'hosts') }}"
+  loop: "{{ lookup('subelements', ssh_keys, 'hosts') }}"
   loop_control:
     loop_var: pair
   vars:
