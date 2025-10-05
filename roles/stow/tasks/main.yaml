@@ -1,0 +1,23 @@
+- name: Stow dotfiles core packages
+  shell: "stow -t {{ ansible_env.HOME }} {{ item }}"
+  args:
+    chdir: "{{ ansible_env.HOME }}/.dots-core"
+  with_items: "{{ filesystem.stow.core }}"
+  register: stow_result_core
+  changed_when: stow_result_core is changed
+
+- name: Stow dotfiles packages
+  shell: "stow -t {{ ansible_env.HOME }} {{ item }}"
+  args:
+    chdir: "{{ ansible_env.HOME }}/.dots"
+  with_items: "{{ filesystem.stow.full }}"
+  register: stow_result_full
+  changed_when: stow_result_full is changed
+
+- name: Stow dotfiles packages extras
+  shell: "stow -t {{ ansible_env.HOME }} {{ item }}"
+  args:
+    chdir: "{{ ansible_env.HOME }}/.dots-org"
+  with_items: "{{ filesystem_org.stow }}"
+  register: stow_result_org
+  changed_when: stow_result_org is changed

@@ -1,0 +1,5 @@
+- name: Install all packages
+  package:
+    name: "{{ packages }}"
+    state: present
+  when: packages | length > 0

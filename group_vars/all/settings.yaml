@@ -1,12 +1,50 @@
+filesystem:
+  directories:
+    - ~/code/personal
+  stow:
+    core:
+      - git
+      - pass
+      - tmux
+    full:
+      - nvim
+      - fish
+      - k9s
+      - task
+
+repos:
+  dots_core: git@github.com:antonlundstroem/dots-core.git
+  dots_full: git@github.com:antonlundstroem/dots.git
+  scripts: git@github.com:antonlundstroem/scripts.git
+
 packages:
-  - git
-  - fish
-  - tmux
-  - pass
-  - gpg
-  #- docker
-  - neovim
+  core:
+    #- openssh
+    - git
+    - curl
+    - neovim
+    - tmux
+    - pass
+    #- gpg
 
+  full:
+    - kubectl
+    #- helm
+    - docker
+    - postgresql-client
+    - k9s
+    - azure-cli
+    - npm
+    - terraform
+    - fish
 
-stow_dirs:
-  - git
+#binaries:
+#  - name: taskwarrior
+#    type: archive
+#    url: "https://github.com/GothenburgBitFactory/taskwarrior/releases/download/v3.4.1/task-3.4.1.tar.gz"
+#  - name: timewarrior
+#    type: archive
+#    url: "https://github.com/GothenburgBitFactory/timewarrior/releases/download/v1.9.1/timew-1.9.1.tar.gz"
+  #- name: bugwarrior
+  #  repo: "fizzbuzz"
+

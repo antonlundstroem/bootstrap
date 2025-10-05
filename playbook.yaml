@@ -1,58 +1,40 @@
-- hosts: all
-  become: true   # Run tasks with sudo if needed (for package installs)
-  tasks:
-    - name: Install packages
-      package:
-        name: "{{ packages }}"
-        state: present
+- hosts: localhost
+  connection: local
+  become: true
+  roles:
+    - user
 
-    - name: Clone dotfiles repository
-      git:
-        repo: "git@github.com:antonlundstroem/dotfiles.git"
-        dest: "{{ ansible_env.HOME }}/.dots"
-        version: main
-        update: yes
+- hosts: localhost
+  connection: local
+  become: false
+  pre_tasks:
+    - name: Build package list
+      vars:
+        core_list: "{{ packages.core | default([]) }}"
+        full_list: "{{ packages.full | default([]) }}"
+        org_list: "{{ packages_org | default([]) }}"
+      set_fact:
+        packages: "{{ core_list + full_list + org_list }}"
 
-    - name: Stow dotfiles packages
-      shell: "stow -t {{ ansible_env.HOME }} {{ item }}"
-      args:
-        chdir: "{{ ansible_env.HOME }}/.dots"
-      with_items: "{{ stow_dirs }}"
-      register: stow_result
-      changed_when: stow_result.rc == 0
+    - name: Build directories list
+      vars:
+        dirs: "{{ filesystem.directories | default([]) }}"
+        org_dirs: "{{ filesystem_org.directories | default([]) }}"
+      set_fact:
+        directories: "{{ dirs + org_dirs }}"
 
-    - name: Stow work password store
-      shell: stow -t {{ ansible_env.HOME }}/.password-store-work password-store
-      args:
-        chdir: "{{ dotfiles_repo }}/pass/aceve"
+    - name: Build binaries list
+      vars:
+        bins: "{{ binaries | default([]) | list }}"
+        org_bins: "{{ binaries_org | default([]) | list }}"
+      set_fact:
+        binaries: "{{ bins + org_bins }}"
 
-    - name: Stow personal password store
-      shell: stow -t {{ ansible_env.HOME }}/.password-store-personal password-store
-      args:
-        chdir: "{{ dotfiles_repo }}/pass/personal"
-
-
-    # ensures stow runs again if files changed in repo
-
-    # Use stow to symlink no?
-    #- name: Symlink dotfiles into home directory
-    #  file:
-    #    src: "{{ ansible_env.HOME }}/dotfiles/{{ item.src }}"
-    #    dest: "{{ ansible_env.HOME }}/{{ item.dest }}"
-    #    state: link
-    #    force: yes
-    #  loop:
-    #    - { src: ".zshrc", dest: ".zshrc" }
-    #    - { src: ".tmux.conf", dest: ".tmux.conf" }
-    #    - { src: ".gitconfig", dest: ".gitconfig" }
-
-    - name: Setup SSH keys from vault
-      copy:
-        dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}"
-        content: "{{ item.private }}"
-        mode: '0600'
-      loop: "{{ ssh_keys | default([]) }}"
-
-    - name: Setup org-specific configs
-      debug:
-        msg: "Org specific var is {{ org_var | default('not set') }}"
+  roles:
+    - filesystem
+    - packages
+    - binaries
+    - ssh
+    - gpg
+    - dotfiles
+    - stow

@@ -1,0 +1,21 @@
+- name: Ensure ~/.gnupg dir exists
+  file:
+    path: "{{ ansible_env.HOME }}/.gnupg"
+    state: directory
+    mode: '0700'
+
+- name: Install private gpg key
+  copy:
+    dest: "{{ ansible_env.HOME }}/.gnupg/private.key"
+    content: "{{ gpg_private_key }}"
+    mode: '0600'
+
+- name: Import GPG private key
+  shell: "gpg --batch --yes --import {{ ansible_env.HOME }}/.gnupg/private.key"
+  args:
+    executable: /bin/bash
+
+- name: Remove temporary GPG key file
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.gnupg/private.key"
+    state: absent

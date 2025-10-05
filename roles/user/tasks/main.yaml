@@ -1,0 +1,27 @@
+- name: Define sudo group map
+  ansible.builtin.set_fact:
+    sudo_group_map:
+      Archlinux: wheel
+      Debian: sudo
+      Ubuntu: sudo
+      Fedora: wheel
+
+- name: Set sudo group per distribution
+  ansible.builtin.set_fact:
+    sudo_group: "{{ sudo_group_map.get(ansible_distribution, 'sudo') }}"
+
+- name: Ensure main user exists
+  ansible.builtin.user:
+    name: "{{ user.name }}"
+    groups: "{{ sudo_group }}"
+    append: true
+    shell: /bin/bash
+    create_home: yes
+    state: present
+
+- name: Ensure user has sudo privileges
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ user.name }}"
+    content: "{{ user.name }} ALL=(ALL) NOPASSWD: ALL\n"
+    mode: '0440'
+  when: ansible_facts.os_family in ['Archlinux', 'Debian', 'Ubuntu', 'RedHat']

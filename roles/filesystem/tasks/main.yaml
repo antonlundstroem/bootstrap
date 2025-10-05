@@ -1,0 +1,4 @@
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/{{ directories }}"
+    state: directory

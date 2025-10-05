@@ -1,0 +1,51 @@
+    # ------------------------------------------------------------
+    # 2. Download simple executable binaries
+    # ------------------------------------------------------------
+    - name: Download plain binaries
+      ansible.builtin.get_url:
+        url: "{{ item.url }}"
+        dest: "/usr/local/bin/{{ item.name }}"
+        mode: '0755'
+      loop: "{{ binaries }}"
+      when: item.type == 'binary'
+      no_log: false   # change to true if URLs are sensitive
+
+    # ------------------------------------------------------------
+    # 3. Download archive files (e.g., .tar.gz)
+    # ------------------------------------------------------------
+    - name: Download archive binaries
+      ansible.builtin.get_url:
+        url: "{{ item.url }}"
+        dest: "/tmp/{{ item.name }}.tar.gz"
+      loop: "{{ binaries }}"
+      when: item.type == 'archive'
+
+    # ------------------------------------------------------------
+    # 4. Unpack archives into /usr/local/bin
+    # ------------------------------------------------------------
+    - name: Unpack archive binaries
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ item.name }}.tar.gz"
+        dest: "/usr/local/bin/"
+        remote_src: true
+      loop: "{{ binaries }}"
+      when: item.type == 'archive'
+
+    # ------------------------------------------------------------
+    # 5. Ensure everything is executable
+    # ------------------------------------------------------------
+    - name: Ensure binaries are executable
+      ansible.builtin.file:
+        path: "/usr/local/bin/{{ item.name }}"
+        mode: '0755'
+      loop: "{{ binaries }}"
+
+    # ------------------------------------------------------------
+    # 6. Clean up temporary archives
+    # ------------------------------------------------------------
+    - name: Remove temporary archives
+      ansible.builtin.file:
+        path: "/tmp/{{ item.name }}.tar.gz"
+        state: absent
+      loop: "{{ binaries }}"
+      when: item.type == 'archive'
