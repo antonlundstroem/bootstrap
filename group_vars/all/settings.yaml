@@ -21,7 +21,6 @@ packages:
     - neovim
     - tmux
     - pass
-
   full:
     - kubectl
     - helm
@@ -42,7 +41,7 @@ stow:
     - nvim
     - fish
     - k9s
-    - task
+    - taskwarrior
 
 
 #binaries:
