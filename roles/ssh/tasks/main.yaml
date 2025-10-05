@@ -9,7 +9,7 @@
     ssh-keyscan -t rsa,ecdsa,ed25519 {{ item.name }} >> ~/.ssh/known_hosts
   args:
     creates: "{{ ansible_env.HOME }}/.ssh/known_hosts"
-  when: item.host is defined
+  when: item.name is defined
   loop: "{{ ssh_keys.hosts }}" ## fix item.hosts.host or something in the vaults
 
 - name: Add SSH config entries for each key and host
@@ -17,14 +17,14 @@
     path: "{{ ansible_env.HOME }}/.ssh/config"
     create: true
     mode: '0600'
-    marker: "# {mark} ANSIBLE MANAGED {{ host_entry.host }} ({{ key_entry.name }})"
+    marker: "# {mark} ANSIBLE MANAGED {{ host_entry.name }} ({{ key_entry.name }})"
     block: |
-      Host {{ host_entry.host }}
-        HostName {{ host_entry.host }}
+      Host {{ host_entry.name }}
+        HostName {{ host_entry.name }}
         User {{ host_entry.user | default('git') }}
         IdentityFile ~/.ssh/{{ key_entry.name }}
         {{ host_entry.extra | default('') | indent(8, false) }}
-  loop: "{{ lookup('subelements', ssh_keys, 'hosts') }}"
+  loop: "{{ lookup('subelements', ssh_keys_org, 'hosts') }}"
   loop_control:
     loop_var: pair
   vars:
