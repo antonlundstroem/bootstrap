@@ -20,16 +20,9 @@
   loop: "{{ ssh_keys }}"
   #no_log: true
 
-- name: Start ssh-agent
-  ansible.builtin.shell: |
-    eval "$(ssh-agent -s)"
-  environment:
-    SSH_AUTH_SOCK: /tmp/ssh-agent.sock
-  args:
-    executable: /bin/bash
-
 - name: Add key
   ansible.builtin.shell: |
+    eval "$(ssh-agent -s)"
     ssh-add "{{ ansible_env.HOME }}/.ssh/{{ item.name }}"
   when: item.private is defined
   loop: "{{ ssh_keys }}"
