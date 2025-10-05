@@ -4,6 +4,13 @@
     state: directory
     mode: '0700'
 
+- name: Add GitHub to known_hosts (prevent host key prompt)
+  ansible.builtin.shell: |
+    ssh-keyscan -t rsa,ecdsa,ed25519 github.com >> ~/.ssh/known_hosts
+  args:
+    creates: "{{ ansible_env.HOME }}/.ssh/known_hosts"
+
+
 - name: Install private SSH keys
   copy:
     dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}"
@@ -13,31 +20,54 @@
   loop: "{{ ssh_keys }}"
   #no_log: true
 
-- name: Install public SSH keys
-  copy:
-    dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}.pub"
-    content: "{{ item.public }}"
-    mode: '0644'
-  when: item.public is defined
-  loop: "{{ ssh_keys }}"
-  #no_log: true
 
-- name: Install private SSH keys org
-  copy:
-    dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}"
-    content: "{{ item.private }}"
-    mode: '0600'
+- name: Start ssh‑agent and add key
+  ansible.builtin.shell: |
+    eval "$(ssh-agent -s)"
+    ssh-add "{{ ansible_env.HOME }}/.ssh/{{ item.name }}"
+
   when: item.private is defined
-  loop: "{{ ssh_keys_org }}"
-  #no_log: true
+  loop: "{{ ssh_keys }}"
+  environment:
+    SSH_AUTH_SOCK: /tmp/ssh-agent.sock
+  args:
+    executable: /bin/bash
+  changed_when: false
 
-- name: Install public SSH keys org
-  copy:
-    dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}.pub"
-    content: "{{ item.public }}"
-    mode: '0644'
-  when: item.public is defined
-  loop: "{{ ssh_keys_org }}"
-  #no_log: true
+#- name: Install private SSH keys
+#  copy:
+#    dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}"
+#    content: "{{ item.private }}"
+#    mode: '0600'
+#  when: item.private is defined
+#  loop: "{{ ssh_keys }}"
+#  #no_log: true
+#
+#- name: Install public SSH keys
+#  copy:
+#    dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}.pub"
+#    content: "{{ item.public }}"
+#    mode: '0644'
+#  when: item.public is defined
+#  loop: "{{ ssh_keys }}"
+#  #no_log: true
+#
+#- name: Install private SSH keys org
+#  copy:
+#    dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}"
+#    content: "{{ item.private }}"
+#    mode: '0600'
+#  when: item.private is defined
+#  loop: "{{ ssh_keys_org }}"
+#  #no_log: true
+#
+#- name: Install public SSH keys org
+#  copy:
+#    dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}.pub"
+#    content: "{{ item.public }}"
+#    mode: '0644'
+#  when: item.public is defined
+#  loop: "{{ ssh_keys_org }}"
+#  #no_log: true
 
 
