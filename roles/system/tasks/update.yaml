@@ -1,0 +1,16 @@
+- name: Update package indexes and upgrade base system
+  become: true
+  block:
+    # Debian / Ubuntu
+    - name: Update apt cache and upgrade packages
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: dist
+      when: ansible_facts.os_family == 'Debian'
+
+    # Arch Linux
+    - name: Update pacman cache and upgrade packages
+      community.general.pacman:
+        update_cache: true
+        upgrade: true
+      when: ansible_facts.os_family == 'Archlinux'
