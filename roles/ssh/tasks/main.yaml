@@ -1,18 +1,51 @@
-- name: Ensure ~/.ssh dir exists
-  file:
+---
+# Ensure ~/.ssh exists
+- name: Ensure ~/.ssh directory exists
+  ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/.ssh"
     state: directory
     mode: '0700'
 
-- name: Add GitHub to known_hosts (prevent host key prompt)
+# --------------------------------------------------------------------
+# 1. Write private and public SSH keys from vault
+# --------------------------------------------------------------------
+- name: Write private SSH keys
+  ansible.builtin.copy:
+    content: "{{ item.private }}"
+    dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}"
+    mode: '0600'
+  loop: "{{ ssh_keys }}"
+  #no_log: true
+
+- name: Write public SSH keys (if provided)
+  ansible.builtin.copy:
+    content: "{{ item.public }}"
+    dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}.pub"
+    mode: '0644'
+  loop: "{{ ssh_keys }}"
+  when: item.public is defined
+  #no_log: true
+
+# --------------------------------------------------------------------
+# 2. Preload host fingerprints so we never get an authenticity prompt
+# --------------------------------------------------------------------
+- name: Add all SSH hosts to known_hosts
   ansible.builtin.shell: |
-    ssh-keyscan -t rsa,ecdsa,ed25519 {{ item.name }} >> ~/.ssh/known_hosts
+    ssh-keyscan -t rsa,ecdsa,ed25519 {{ host_entry.name }} >> "{{ ansible_env.HOME }}/.ssh/known_hosts"
   args:
     creates: "{{ ansible_env.HOME }}/.ssh/known_hosts"
-  when: item.name is defined
-  loop: "{{ ssh_keys.hosts }}" ## fix item.hosts.host or something in the vaults
+  loop: "{{ lookup('subelements', ssh_keys, 'hosts') }}"
+  loop_control:
+    loop_var: pair
+  vars:
+    key_entry: "{{ pair.0 }}"
+    host_entry: "{{ pair.1 }}"
+  changed_when: false
 
-- name: Add SSH config entries for each key and host
+# --------------------------------------------------------------------
+# 3. Build ~/.ssh/config
+# --------------------------------------------------------------------
+- name: Add SSH config entries for each key/host pair
   ansible.builtin.blockinfile:
     path: "{{ ansible_env.HOME }}/.ssh/config"
     create: true
@@ -31,23 +64,15 @@
     key_entry: "{{ pair.0 }}"
     host_entry: "{{ pair.1 }}"
 
-- name: Install private SSH keys
-  copy:
-    dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}"
-    content: "{{ item.private }}"
-    mode: '0600'
-  when: item.private is defined
-  loop: "{{ ssh_keys }}"
-  #no_log: true
-
-- name: Add key
+# --------------------------------------------------------------------
+# 4. (Optional) Add passphrase-protected keys to ssh-agent
+# --------------------------------------------------------------------
+- name: Add keys to ssh-agent (if passphrase provided)
   ansible.builtin.shell: |
-    eval "$(ssh-agent -s)"
-    ssh-add "{{ ansible_env.HOME }}/.ssh/{{ item.name }}"
-  when: item.private is defined
-  loop: "{{ ssh_keys }}"
-  environment:
-    SSH_AUTH_SOCK: /tmp/ssh-agent.sock
+    echo "{{ item.passphrase }}" | ssh-add "{{ ansible_env.HOME }}/.ssh/{{ item.name }}" -
   args:
     executable: /bin/bash
+  loop: "{{ ssh_keys }}"
+  when: item.passphrase is defined
+  #no_log: true
   changed_when: false
