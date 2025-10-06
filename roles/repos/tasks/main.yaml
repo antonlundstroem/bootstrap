@@ -17,6 +17,7 @@
   ansible.builtin.git:
     repo: "{{ project_url.1 }}"
     dest: "{{ ansible_env.HOME }}/code/{{ project_url.0.path }}/{{ (project_url.1 | basename | splitext).0 }}"
+    #accept_hostkey: yes
   loop: "{{ lookup('subelements', repos_org.projects, 'urls') }}"
   loop_control:
     loop_var: project_url

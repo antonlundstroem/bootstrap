@@ -30,18 +30,19 @@
 # --------------------------------------------------------------------
 # 2. Preload host fingerprints so we never get an authenticity prompt
 # --------------------------------------------------------------------
-- name: Add all SSH hosts to known_hosts
-  ansible.builtin.shell: |
-    ssh-keyscan -t rsa,ecdsa,ed25519 {{ host_entry.name }} >> "{{ ansible_env.HOME }}/.ssh/known_hosts"
-  args:
-    creates: "{{ ansible_env.HOME }}/.ssh/known_hosts"
+- name: Add SSH host key for each host
+  ansible.builtin.known_hosts:
+    name: "{{ (host_entry.port is defined) | ternary('[' ~ host_entry.name ~ ']:' ~ host_entry.port, host_entry.name) }}"
+    key: "{{ lookup('pipe', 'ssh-keyscan -t rsa,ecdsa,ed25519 ' ~ ((host_entry.port is defined) | ternary('-p ' ~ host_entry.port ~ ' ', '')) ~ host_entry.name) }}"
+    path: "{{ ansible_env.HOME }}/.ssh/known_hosts"
+    hash_host: true
+    state: present
   loop: "{{ lookup('subelements', ssh_keys, 'hosts') }}"
   loop_control:
     loop_var: pair
   vars:
     key_entry: "{{ pair.0 }}"
     host_entry: "{{ pair.1 }}"
-  changed_when: false
   no_log: true
 
 # --------------------------------------------------------------------
@@ -56,6 +57,7 @@
     block: |
       Host {{ host_entry.name }}
         HostName {{ host_entry.name }}
+        {% if host_entry.port is defined %}Port {{ host_entry.port }}{% endif %}
         User {{ host_entry.user | default('git') }}
         IdentityFile ~/.ssh/{{ key_entry.name }}
         {{ host_entry.extra | default('') | indent(8, false) }}
@@ -70,12 +72,44 @@
 # --------------------------------------------------------------------
 # 4. (Optional) Add passphrase-protected keys to ssh-agent
 # --------------------------------------------------------------------
-- name: Add keys to ssh-agent (if passphrase provided)
-  ansible.builtin.shell: |
-    echo "{{ item.passphrase }}" | ssh-add "{{ ansible_env.HOME }}/.ssh/{{ item.name }}" -
+- name: Create temporary SSH_ASKPASS helper for passphrase keys
+  ansible.builtin.copy:
+    dest: "{{ ansible_env.HOME }}/.ssh/.askpass_{{ item.name }}"
+    mode: '0700'
+    content: |
+      #!/usr/bin/env bash
+      echo "{{ item.passphrase }}"
+  loop: "{{ ssh_keys }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.passphrase is defined
+    - ansible_env.SSH_AUTH_SOCK is defined
+  no_log: true
+
+- name: Add key to running ssh-agent using SSH_ASKPASS
+  ansible.builtin.shell: >
+    setsid -w env SSH_ASKPASS="{{ ansible_env.HOME }}/.ssh/.askpass_{{ item.name }}" SSH_ASKPASS_REQUIRE=force DISPLAY=:0
+    ssh-add "{{ ansible_env.HOME }}/.ssh/{{ item.name }}" < /dev/null
   args:
     executable: /bin/bash
   loop: "{{ ssh_keys }}"
-  when: item.passphrase is defined
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.passphrase is defined
+    - ansible_env.SSH_AUTH_SOCK is defined
   changed_when: false
+  no_log: true
+
+- name: Remove temporary SSH_ASKPASS helper scripts
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.ssh/.askpass_{{ item.name }}"
+    state: absent
+  loop: "{{ ssh_keys }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.passphrase is defined
+    - ansible_env.SSH_AUTH_SOCK is defined
   no_log: true
