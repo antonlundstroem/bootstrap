@@ -15,7 +15,7 @@
     dest: "{{ ansible_env.HOME }}/.ssh/{{ item.name }}"
     mode: '0600'
   loop: "{{ ssh_keys }}"
-  #no_log: true
+  no_log: true
 
 - name: Write public SSH keys (if provided)
   ansible.builtin.copy:
@@ -24,7 +24,7 @@
     mode: '0644'
   loop: "{{ ssh_keys }}"
   when: item.public is defined
-  #no_log: true
+  no_log: true
 
 # --------------------------------------------------------------------
 # 2. Preload host fingerprints so we never get an authenticity prompt
@@ -74,5 +74,5 @@
     executable: /bin/bash
   loop: "{{ ssh_keys }}"
   when: item.passphrase is defined
-  #no_log: true
+  no_log: true
   changed_when: false
