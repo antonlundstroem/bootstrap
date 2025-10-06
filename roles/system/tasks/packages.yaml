@@ -1,0 +1,5 @@
+- name: Install all common packages
+  package:
+    name: "{{ common.packages }}"
+    state: present
+  when: common.packages | length > 0
