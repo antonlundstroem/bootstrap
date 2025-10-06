@@ -9,19 +9,6 @@
   become: true
   become_user: "{{ user.name }}"
   pre_tasks:
-    - name: Build ssh keys entry list
-      vars:
-        base_ssh_keys: "{{ ssh_keys | default([]) }}"
-        org_ssh_keys:  "{{ ssh_keys_org | default([]) }}"
-      set_fact:
-        ssh_keys: "{{ base_ssh_keys + org_ssh_keys }}"
-
-    - name: Build ssh config entry list
-      vars:
-        base_ssh_config: "{{ ssh_config | default([]) }}"
-        org_ssh_config:  "{{ ssh_config_org | default([]) }}"
-      set_fact:
-        ssh_config: "{{ base_ssh_config + org_ssh_config }}"
 
     - name: Build package list
       vars:
@@ -56,3 +43,5 @@
     - gpg
     - dotfiles
     - stow
+    #- repos
+

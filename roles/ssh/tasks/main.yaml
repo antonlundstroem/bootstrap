@@ -1,3 +1,5 @@
+- import_tasks: pre.yaml
+
 ---
 # Ensure ~/.ssh exists
 - name: Ensure ~/.ssh directory exists
