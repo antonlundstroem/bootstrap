@@ -9,6 +9,25 @@
   become: true
   become_user: "{{ user.name }}"
 
+  pre_tasks:
+    - name: Ensure ssh-agent is running and capture socket/pid
+      ansible.builtin.shell: |
+        if [ -n "$SSH_AUTH_SOCK" ] && [ -S "$SSH_AUTH_SOCK" ]; then
+          echo "$SSH_AUTH_SOCK|$SSH_AGENT_PID"
+        else
+          eval "$(ssh-agent -s)" >/dev/null
+          echo "$SSH_AUTH_SOCK|$SSH_AGENT_PID"
+        fi
+      args:
+        executable: /bin/bash
+      register: ssh_agent_env
+      changed_when: false
+
+    - name: Export SSH agent variables for subsequent roles
+      ansible.builtin.set_fact:
+        ssh_auth_sock: "{{ (ssh_agent_env.stdout | default('')) | regex_search('^([^|]+)') }}"
+        ssh_agent_pid: "{{ (ssh_agent_env.stdout | default('')) | regex_search('[^|]+$') }}"
+
   roles:
     - filesystem
     - role: packages
@@ -21,4 +40,7 @@
     - dotfiles
     - stow
     - repos
+
+  environment:
+    SSH_AUTH_SOCK: "{{ ssh_auth_sock }}"
 

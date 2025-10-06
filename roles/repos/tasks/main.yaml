@@ -1,4 +1,4 @@
-- name: Create wanted repo directories
+- name: ORG ->Create wanted repo directories
   ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/code/work/{{ item.path }}"
     state: directory
@@ -13,11 +13,12 @@
 #    update: yes
 #  loop: "{{ repos_org.projects }}"
 
-- name: ORG -> Clone all project repos (using subelements)
+- name: ORG -> Clone org repos
   ansible.builtin.git:
     repo: "{{ project_url.1 }}"
     dest: "{{ ansible_env.HOME }}/code/{{ project_url.0.path }}/{{ (project_url.1 | basename | splitext).0 }}"
-    #accept_hostkey: yes
+    accept_hostkey: yes
+    key_file: "{{ ansible_env.HOME }}/.ssh/id_rsa_org.nopass"
   loop: "{{ lookup('subelements', repos_org.projects, 'urls') }}"
   loop_control:
     loop_var: project_url

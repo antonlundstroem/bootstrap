@@ -68,14 +68,48 @@
   no_log: true
 
 # --------------------------------------------------------------------
-# 4. (Optional) Add passphrase-protected keys to ssh-agent
+# 4. Add passphrase-protected keys to ssh-agent using vault (non-interactive)
 # --------------------------------------------------------------------
-- name: Add keys to ssh-agent (if passphrase provided)
-  ansible.builtin.shell: |
-    echo "{{ item.passphrase }}" | ssh-add "{{ ansible_env.HOME }}/.ssh/{{ item.name }}" -
+- name: Create temporary SSH_ASKPASS helper for passphrase keys
+  ansible.builtin.copy:
+    dest: "{{ ansible_env.HOME }}/.ssh/.askpass_{{ item.name }}"
+    mode: '0700'
+    content: |
+      #!/usr/bin/env bash
+      echo "{{ item.passphrase }}"
+  loop: "{{ ssh_keys }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.passphrase is defined
+    - (ssh_auth_sock | default(ansible_env.SSH_AUTH_SOCK | default(''))) | length > 0
+  no_log: true
+
+- name: Add key to running ssh-agent using SSH_ASKPASS
+  ansible.builtin.shell: >
+    setsid -w env SSH_ASKPASS="{{ ansible_env.HOME }}/.ssh/.askpass_{{ item.name }}" SSH_ASKPASS_REQUIRE=force DISPLAY=:0
+    ssh-add "{{ ansible_env.HOME }}/.ssh/{{ item.name }}" < /dev/null
   args:
     executable: /bin/bash
   loop: "{{ ssh_keys }}"
-  when: item.passphrase is defined
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.passphrase is defined
+    - (ssh_auth_sock | default(ansible_env.SSH_AUTH_SOCK | default(''))) | length > 0
   changed_when: false
-  #no_log: true
+  no_log: true
+  environment:
+    SSH_AUTH_SOCK: "{{ ssh_auth_sock | default(ansible_env.SSH_AUTH_SOCK) }}"
+
+- name: Remove temporary SSH_ASKPASS helper scripts
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.ssh/.askpass_{{ item.name }}"
+    state: absent
+  loop: "{{ ssh_keys }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.passphrase is defined
+    - (ssh_auth_sock | default(ansible_env.SSH_AUTH_SOCK | default(''))) | length > 0
+  no_log: true
