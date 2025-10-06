@@ -6,8 +6,11 @@
 
 - hosts: localhost
   connection: local
+  become: true
   #become_user: "{{ user.name }}"
   become_user: anlu
+  #become_method: su
+  #become_flags: '-'
   pre_tasks:
     - name: Build ssh keys entry list
       vars:
