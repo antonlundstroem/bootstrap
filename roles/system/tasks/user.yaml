@@ -1,0 +1,3 @@
+- name: Determine bootstrap user name (prefer vault_org.user.name, else vault.user.name)
+  ansible.builtin.set_fact:
+    bootstrap_user_name: "{{ (vars.get('vault_org', {}).get('user', {}).get('name')) | default(vars.get('vault', {}).get('user', {}).get('name')) }}"

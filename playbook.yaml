@@ -9,7 +9,7 @@
   hosts: localhost
   connection: local
   become: true
-  become_user: "{{ vault_org.user.name }}"
+  become_user: "{{ bootstrap_user_name | default(vault_org.user.name | default(user.name)) }}"
   gather_facts: true
 
   roles:

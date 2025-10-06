@@ -1,5 +1,6 @@
 - import_tasks: update.yaml
 - import_tasks: packages.yaml
+- import_tasks: user.yaml
 
 - name: Define sudo group map
   ansible.builtin.set_fact:
@@ -15,7 +16,7 @@
 
 - name: Ensure main user exists
   ansible.builtin.user:
-    name: "{{ user.name }}"
+    name: "{{ bootstrap_user_name }}"
     groups: "{{ sudo_group }}"
     append: true
     shell: /bin/bash
@@ -24,7 +25,7 @@
 
 - name: Ensure user has sudo privileges
   ansible.builtin.copy:
-    dest: "/etc/sudoers.d/{{ user.name }}"
-    content: "{{ user.name }} ALL=(ALL) NOPASSWD: ALL\n"
+    dest: "/etc/sudoers.d/{{ vault_org.user.name }}"
+    content: "{{ bootstrap_user_name }} ALL=(ALL) NOPASSWD: ALL\n"
     mode: '0440'
   when: ansible_facts.os_family in ['Archlinux', 'Debian', 'Ubuntu', 'RedHat']
