@@ -8,8 +8,6 @@
   connection: local
   become: true
   become_user: "{{ user.name }}"
-  pre_tasks:
-
 
   roles:
     - filesystem
