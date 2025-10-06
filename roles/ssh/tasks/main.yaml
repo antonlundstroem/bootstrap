@@ -32,8 +32,8 @@
 # --------------------------------------------------------------------
 - name: Add SSH host key for each host
   ansible.builtin.known_hosts:
-    name: "{{ (host_entry.port is defined) | ternary('[' ~ host_entry.name ~ ']:' ~ host_entry.port, host_entry.name) }}"
-    key: "{{ lookup('pipe', 'ssh-keyscan -t rsa,ecdsa,ed25519 ' ~ ((host_entry.port is defined) | ternary('-p ' ~ host_entry.port ~ ' ', '')) ~ host_entry.name) }}"
+    name: "{{ ('[' ~ host_entry.name ~ ']:' ~ host_entry.port) if ('port' in host_entry) else host_entry.name }}"
+    key: "{{ lookup('pipe', 'ssh-keyscan -t rsa,ecdsa,ed25519 ' ~ ((' -p ' ~ host_entry.port ~ ' ') if ('port' in host_entry) else '') ~ host_entry.name) }}"
     path: "{{ ansible_env.HOME }}/.ssh/known_hosts"
     hash_host: true
     state: present
