@@ -1,8 +1,3 @@
-common:
-  packages:
-    - clang
-    - sudo
-
 filesystem:
   directories:
     - code/core
@@ -14,6 +9,9 @@ repos:
 
 packages:
   core:
+    - clang
+    - sudo
+  minimal:
     - stow
     - openssh
     - git

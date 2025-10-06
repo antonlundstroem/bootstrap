@@ -1,5 +1,5 @@
-- name: Install all common packages
+- name: Install all core packages
   package:
-    name: "{{ common.packages }}"
+    name: "{{ packages.core }}"
     state: present
-  when: common.packages | length > 0
+  when: packages.core | length > 0
