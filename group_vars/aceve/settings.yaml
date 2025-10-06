@@ -1,6 +1,6 @@
 filesystem_org:
   directories::
-    - ~/code/work
+    - code/work
 
 repos_org:
   dots: github.com:antonlundstroem/dots-aceve.git
