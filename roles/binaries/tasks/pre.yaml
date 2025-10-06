@@ -1,0 +1,6 @@
+- name: Build binaries list
+  vars:
+    bins: "{{ binaries | default([]) | list }}"
+    org_bins: "{{ binaries_org | default([]) | list }}"
+  set_fact:
+    binaries: "{{ bins + org_bins }}"

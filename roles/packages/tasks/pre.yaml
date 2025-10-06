@@ -1,0 +1,7 @@
+- name: Build package list
+  vars:
+    core_list: "{{ packages.core | default([]) }}"
+    full_list: "{{ packages.full | default([]) }}"
+    org_list: "{{ packages_org | default([]) }}"
+  set_fact:
+    packages: "{{ core_list + full_list + org_list }}"

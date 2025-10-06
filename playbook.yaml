@@ -10,27 +10,6 @@
   become_user: "{{ user.name }}"
   pre_tasks:
 
-    - name: Build package list
-      vars:
-        core_list: "{{ packages.core | default([]) }}"
-        full_list: "{{ packages.full | default([]) }}"
-        org_list: "{{ packages_org | default([]) }}"
-      set_fact:
-        packages: "{{ core_list + full_list + org_list }}"
-
-    - name: Build directories list
-      vars:
-        dirs: "{{ filesystem.directories | default([]) }}"
-        org_dirs: "{{ filesystem_org.directories | default([]) }}"
-      set_fact:
-        directories: "{{ dirs + org_dirs }}"
-
-    - name: Build binaries list
-      vars:
-        bins: "{{ binaries | default([]) | list }}"
-        org_bins: "{{ binaries_org | default([]) | list }}"
-      set_fact:
-        binaries: "{{ bins + org_bins }}"
 
   roles:
     - filesystem

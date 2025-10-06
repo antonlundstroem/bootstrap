@@ -1,0 +1,6 @@
+- name: Build directories list
+  vars:
+    dirs: "{{ filesystem.directories | default([]) }}"
+    org_dirs: "{{ filesystem_org.directories | default([]) }}"
+  set_fact:
+    directories: "{{ dirs + org_dirs }}"
