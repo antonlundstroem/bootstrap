@@ -41,6 +41,7 @@
     key_entry: "{{ pair.0 }}"
     host_entry: "{{ pair.1 }}"
   changed_when: false
+  no_log: true
 
 # --------------------------------------------------------------------
 # 3. Build ~/.ssh/config
@@ -63,6 +64,7 @@
   vars:
     key_entry: "{{ pair.0 }}"
     host_entry: "{{ pair.1 }}"
+  no_log: true
 
 # --------------------------------------------------------------------
 # 4. (Optional) Add passphrase-protected keys to ssh-agent
@@ -76,3 +78,4 @@
   when: item.passphrase is defined
   no_log: true
   changed_when: false
+  no_log: true
