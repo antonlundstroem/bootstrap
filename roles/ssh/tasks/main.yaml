@@ -33,7 +33,7 @@
 - name: Add SSH host key for each host
   ansible.builtin.known_hosts:
     name: "{{ ('[' ~ host_entry.name ~ ']:' ~ host_entry.port) if ('port' in host_entry) else host_entry.name }}"
-    key: "{{ lookup('pipe', 'ssh-keyscan -t rsa,ecdsa,ed25519 ' ~ ((' -p ' ~ host_entry.port ~ ' ') if ('port' in host_entry) else '') ~ host_entry.name ~ ' | cut -d" " -f2-') }}"
+    key: "{{ lookup('pipe', 'ssh-keyscan -t rsa,ecdsa,ed25519 ' ~ ((' -p ' ~ host_entry.port ~ ' ') if ('port' in host_entry) else '') ~ host_entry.name) }}"
     path: "{{ ansible_env.HOME }}/.ssh/known_hosts"
     hash_host: false
     state: present
