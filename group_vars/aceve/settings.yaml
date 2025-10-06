@@ -1,14 +1,37 @@
 filesystem_org:
   directories:
-    - code/work
+    - work
 
 repos_org:
   dots: github.com:antonlundstroem/dots-aceve.git
   projects:
+    - path: gitops
+      urls:
+        - git@gitlab.hantverksdata.se:devops/iac.git
+        - git@gitlab.hantverksdata.se:devops/pipeline-includes.git
+        - git@gitlab.hantverksdata.se:tracked/tracked-gitops.git
+
+    - path: gitops/argo/core
+      urls:
+        - git@gitlab.hantverksdata.se:devops/argo/core/argocd.git
+        - git@gitlab.hantverksdata.se:devops/argo/core/gitops.git
+        - git@gitlab.hantverksdata.se:devops/argo/core/argo-rollouts.git
+
+    - path: gitops/argo/apps
+      urls:
+        - git@gitlab.hantverksdata.se:devops/argo/apps/external-secret.git
+
     - path: gitops/op
       urls:
         - git@gitlab.hantverksdata.se:oneplatform/devops/gitops/core.git
         - git@gitlab.hantverksdata.se:oneplatform/devops/gitops/dataplatform.git
+        - git@gitlab.hantverksdata.se:oneplatform/ci-templates.git
+
+    - path: gitops/op-old ## Remove this later
+      urls:
+        - git@gitlab.hantverksdata.se:oneplatform/infrastructure/argocd.git
+        - git@gitlab.hantverksdata.se:oneplatform/infrastructure/teams/core.git
+        - git@gitlab.hantverksdata.se:oneplatform/infrastructure/teams/dataplatform.git
 
 packages_org:
   - argocd
