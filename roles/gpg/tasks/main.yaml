@@ -7,7 +7,7 @@
 - name: Install private gpg key
   copy:
     dest: "{{ ansible_env.HOME }}/.gnupg/private.key"
-    content: "{{ gpg_private_key }}"
+    content: "{{ vault.gpg_private_key }}"
     mode: '0600'
 
 - name: Import GPG private key

@@ -1,7 +1,7 @@
 - name: Build ssh keys entry list
   vars:
-    base_ssh_keys: "{{ ssh_keys | default([]) }}"
-    org_ssh_keys:  "{{ ssh_keys_org | default([]) }}"
+    base_ssh_keys: "{{ vault.ssh_keys | default([]) }}"
+    org_ssh_keys:  "{{ vault_org.ssh_keys | default([]) }}"
   set_fact:
     ssh_keys: "{{ base_ssh_keys + org_ssh_keys }}"
 
