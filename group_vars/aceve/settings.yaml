@@ -4,6 +4,11 @@ filesystem_org:
 
 repos_org:
   dots: github.com:antonlundstroem/dots-aceve.git
+  projects:
+    - path: gitops/op
+      urls:
+        - git@gitlab.hantverksdata.se:oneplatform/devops/gitops/core.git
+        - git@gitlab.hantverksdata.se:oneplatform/devops/gitops/dataplatform.git
 
 packages_org:
   - argocd
@@ -11,7 +16,6 @@ packages_org:
   # - dotnet
 #- 1password-cli -- mirrors have to be added
   # cursor-agent
-  #
 
 stow_org:
   - pass
