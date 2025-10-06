@@ -20,5 +20,5 @@
     - gpg
     - dotfiles
     - stow
-    #- repos
+    - repos
 
