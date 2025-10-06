@@ -24,7 +24,7 @@
         User {{ host_entry.user | default('git') }}
         IdentityFile ~/.ssh/{{ key_entry.name }}
         {{ host_entry.extra | default('') | indent(8, false) }}
-  loop: "{{ lookup('subelements', ssh_keys_org, 'hosts') }}"
+  loop: "{{ lookup('subelements', ssh_keys, 'hosts') }}"
   loop_control:
     loop_var: pair
   vars:
