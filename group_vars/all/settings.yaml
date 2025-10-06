@@ -25,6 +25,7 @@ packages:
     - neovim
     - tmux
     - pass
+    - fzf
   full:
     - kubectl
     - helm
