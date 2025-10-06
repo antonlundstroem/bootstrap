@@ -48,9 +48,9 @@
   roles:
     - filesystem
     - role: packages
-      apply:
-        become: true
-        become_user: root
+      become: true
+      become_user: root
+      become_method: sudo
     - binaries
     - ssh
     - gpg
