@@ -6,7 +6,8 @@
 
 - hosts: localhost
   connection: local
-  become_user: "{{ user.name }}"
+  #become_user: "{{ user.name }}"
+  become_user: anlu
   pre_tasks:
     - name: Build ssh keys entry list
       vars:

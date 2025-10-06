@@ -1,5 +1,4 @@
 - name: Update package indexes and upgrade base system
-  become: true
   block:
     # Debian / Ubuntu
     - name: Update apt cache and upgrade packages
