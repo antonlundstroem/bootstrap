@@ -76,6 +76,5 @@
     executable: /bin/bash
   loop: "{{ ssh_keys }}"
   when: item.passphrase is defined
-  no_log: true
   changed_when: false
   no_log: true

@@ -5,16 +5,12 @@ common:
 
 filesystem:
   directories:
-    - code/personal
+    - code/core
 repos:
   dots_core: git@github.com:antonlundstroem/dots-core.git
   dots_full: git@github.com:antonlundstroem/dots.git
   scripts: git@github.com:antonlundstroem/scripts.git
 
-ssh_config:
-  - host: github.com
-    user: git
-    identityfile: "id_rsa_personal"
 
 packages:
   core:
