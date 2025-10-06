@@ -1,26 +1,18 @@
 - import_tasks: pre.yaml
 
-- name: ORG ->Create wanted repo directories
+- name: ORG -> Create wanted repo directories
   ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/code/work/{{ item.path }}"
     state: directory
     mode: '0755'
   loop: "{{ repos_org.projects }}"
 
-#- name: ORG -> Clone projects repositories
-#  git:
-#    repo: "{{ item.url }}"
-#    dest: "{{ ansible_env.HOME }}/code/work/{{ item.path }}"
-#    #version: master
-#    update: yes
-#  loop: "{{ repos_org.projects }}"
 
 - name: ORG -> Clone org repos
   ansible.builtin.git:
     repo: "{{ project_url.1 }}"
-    dest: "{{ ansible_env.HOME }}/code/{{ project_url.0.path }}/{{ (project_url.1 | basename | splitext).0 }}"
+    dest: "{{ ansible_env.HOME }}/code/work/{{ project_url.0.path }}/{{ (project_url.1 | basename | splitext).0 }}"
     accept_hostkey: yes
-    # Use agent-loaded key; no need to specify key_file
   loop: "{{ lookup('subelements', repos_org.projects, 'urls') }}"
   loop_control:
     loop_var: project_url

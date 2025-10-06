@@ -1,12 +1,6 @@
----
 - name: Ensure SSH agent socket is available for repos
   ansible.builtin.set_fact:
     ssh_auth_sock: "{{ ssh_auth_sock | default(lookup('env','SSH_AUTH_SOCK') | default('')) }}"
-
-- name: Debug SSH agent socket (optional)
-  ansible.builtin.debug:
-    msg: "Using SSH_AUTH_SOCK={{ ssh_auth_sock }}"
-  when: (ssh_auth_sock | default('')) | length > 0
 
 - name: Fail if no SSH agent socket is available
   ansible.builtin.fail:
