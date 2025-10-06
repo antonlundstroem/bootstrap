@@ -1,5 +1,5 @@
 filesystem_org:
-  directories::
+  directories:
     - code/work
 
 repos_org:
