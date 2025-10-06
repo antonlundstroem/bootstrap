@@ -11,6 +11,7 @@ packages:
   core:
     - clang
     - sudo
+    - unzip
   minimal:
     - stow
     - openssh
