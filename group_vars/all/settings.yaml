@@ -27,6 +27,7 @@ packages:
     - pass
     - fzf
   full:
+    - keychain
     - kubectl
     - helm
     - docker
