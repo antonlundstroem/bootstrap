@@ -1,6 +1,7 @@
 filesystem:
   directories:
     - core
+    - .undo
 repos:
   dots_core: git@github.com:antonlundstroem/dots-core.git
   dots_full: git@github.com:antonlundstroem/dots.git
