@@ -12,7 +12,7 @@ packages:
     - clang
     - sudo
     - unzip
-    - fd-find
+    - fd
     - ripgrep
     - make
   minimal:
