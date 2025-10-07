@@ -12,6 +12,9 @@ packages:
     - clang
     - sudo
     - unzip
+    - fd-find
+    - ripgrep
+    - make
   minimal:
     - stow
     - openssh
@@ -38,6 +41,7 @@ stow:
     - git
     - pass
     - tmux
+    - gnupg
   full:
     - nvim
     - fish
