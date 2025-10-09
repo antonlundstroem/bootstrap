@@ -8,7 +8,6 @@ repos:
   scripts: git@github.com:antonlundstroem/scripts.git
   bootstrap: git@github.com:antonlundstroem/bootstrap.git
 
-
 packages:
   core:
     - clang
@@ -17,6 +16,7 @@ packages:
     - fd
     - ripgrep
     - make
+    - xclip
   minimal:
     - stow
     - openssh
@@ -49,8 +49,6 @@ stow:
     - fish
     - k9s
     - taskwarrior
-
-
 #binaries:
 #  - name: taskwarrior
 #    type: archive
@@ -58,6 +56,6 @@ stow:
 #  - name: timewarrior
 #    type: archive
 #    url: "https://github.com/GothenburgBitFactory/timewarrior/releases/download/v1.9.1/timew-1.9.1.tar.gz"
-  #- name: bugwarrior
-  #  repo: "fizzbuzz"
+#- name: bugwarrior
+#  repo: "fizzbuzz"
 
