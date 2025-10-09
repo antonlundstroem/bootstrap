@@ -1,6 +1,9 @@
 - name: Ensure glab config permissions are secure
   ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/.config/glab-cli/config.yml"
+    path: "{{ ansible_env.HOME }}/{{ item }}"
     mode: "0600"
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_gid | default(ansible_user_id) }}"
+    loop:
+      - ".config/glab-cli/aliases.yml"
+      - ".config/glab-cli/config.yml"
