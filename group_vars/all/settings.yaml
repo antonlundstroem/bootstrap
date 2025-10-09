@@ -6,6 +6,7 @@ repos:
   dots_core: git@github.com:antonlundstroem/dots-core.git
   dots_full: git@github.com:antonlundstroem/dots.git
   scripts: git@github.com:antonlundstroem/scripts.git
+  bootstrap: git@github.com:antonlundstroem/bootstrap.git
 
 
 packages:
